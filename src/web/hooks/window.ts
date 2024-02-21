@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from ".";
-import { setMaximized } from "../store";
+import { setMaximized, setPlatform } from "../store";
 
 export const useWindowState = () => {
   const dispatch = useAppDispatch();
@@ -16,4 +16,15 @@ export const useWindowState = () => {
     });
   }, []);
   return { maximized };
+};
+
+export const useElectron = () => {
+  const dispatch = useAppDispatch();
+  const platform = useAppSelector((state) => state.window.platform);
+  useEffect(() => {
+    window.app.platform().then((platform) => {
+      dispatch(setPlatform(platform));
+    });
+  }, []);
+  return { platform };
 };

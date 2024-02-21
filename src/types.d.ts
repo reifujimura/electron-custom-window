@@ -7,6 +7,7 @@ declare global {
 
 export interface AppContext {
   info: (message: string) => void;
+  platform: () => Promise<NodeJS.Platform>;
 }
 
 export interface MainWindow {

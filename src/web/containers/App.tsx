@@ -1,9 +1,14 @@
-import { ActionIcon, AppShell, Center, Flex, Text } from "@mantine/core";
+import { ActionIcon, AppShell, Box, Center, Flex, Text } from "@mantine/core";
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
 } from "@tabler/icons-react";
-import { useAppDispatch, useAppSelector, useWindowState } from "../hooks";
+import {
+  useAppDispatch,
+  useAppSelector,
+  useElectron,
+  useWindowState,
+} from "../hooks";
 import { toggleNavbar } from "../store";
 
 const ExpandButton = () => {
@@ -35,6 +40,7 @@ const ExpandButton = () => {
 export const App = () => {
   const navbarOpen = useAppSelector((state) => state.appShell.navbarOpen);
   const { maximized } = useWindowState();
+  const { platform } = useElectron();
   return (
     <AppShell
       header={{
@@ -53,15 +59,19 @@ export const App = () => {
       <AppShell.Header>
         <Flex
           h="100%"
-          ml={maximized ? 0 : 84}
+          p="sm"
+          ml={platform !== "darwin" || maximized ? undefined : 84}
           align="center"
           gap="sm"
           className="titlebar"
         >
-          <ExpandButton />
-          <Text fw={900} fz="sm">
-            App
-          </Text>
+          {maximized ? <span style={{ width: 22 }} /> : <ExpandButton />}
+          <Flex justify="center" flex={1}>
+            <Text fw={900} fz="sm">
+              App
+            </Text>
+          </Flex>
+          <span style={{ width: 22 }} />
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar>

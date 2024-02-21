@@ -26,9 +26,16 @@ app.whenReady().then(() => {
     width: 1152,
     height: 864,
     titleBarStyle: "hidden",
-    titleBarOverlay: {
-      height: 40,
-    },
+    titleBarOverlay:
+      process.platform === "win32"
+        ? {
+            height: 40,
+            color: "#00000000",
+            symbolColor: "#dee2e6",
+          }
+        : {
+            height: 40,
+          },
     trafficLightPosition: {
       x: 20,
       y: 12,
@@ -42,7 +49,6 @@ app.whenReady().then(() => {
   });
   mainWindow.on("maximize", () => {
     logger.info("maximize");
-    console.log("maximize");
     mainWindow?.webContents.send("maximize");
   });
   mainWindow.on("unmaximize", () => {
@@ -54,6 +60,9 @@ app.whenReady().then(() => {
     const maximized = mainWindow?.isMaximized();
     logger.info(`maximized: ${maximized}`);
     return mainWindow?.isMaximized();
+  });
+  ipcMain.handle("platform", () => {
+    return process.platform;
   });
 
   mainWindow.setMenu(null);
