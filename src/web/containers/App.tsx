@@ -93,7 +93,7 @@ export const App = () => {
               className="titlebar-control"
               placeholder="Search"
               w="100%"
-              maw={500}
+              maw={360}
               size="xs"
             />
           </Flex>
