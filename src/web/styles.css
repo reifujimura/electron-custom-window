@@ -10,6 +10,6 @@ body,
 .titlebar {
   -webkit-app-region: drag;
 }
-.titlebar > .item {
+.titlebar-control {
   -webkit-app-region: no-drag;
 }

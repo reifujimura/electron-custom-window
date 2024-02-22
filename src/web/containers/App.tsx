@@ -1,7 +1,18 @@
-import { ActionIcon, AppShell, Box, Center, Flex, Text } from "@mantine/core";
 import {
-  IconLayoutSidebarLeftCollapse,
-  IconLayoutSidebarLeftExpand,
+  ActionIcon,
+  AppShell,
+  Box,
+  Center,
+  Divider,
+  Flex,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import SplitPane, { Pane } from "split-pane-react";
+import {
+  IconLayoutSidebarLeftCollapseFilled,
+  IconLayoutSidebarLeftExpandFilled,
+  IconSearch,
 } from "@tabler/icons-react";
 import {
   useAppDispatch,
@@ -9,7 +20,11 @@ import {
   useElectron,
   useWindowState,
 } from "../hooks";
-import { toggleNavbar } from "../store";
+import {
+  setHorizontalSplitSizes,
+  setVerticalSplitSizes,
+  toggleNavbar,
+} from "../store";
 
 const ExpandButton = () => {
   const dispatch = useAppDispatch();
@@ -18,8 +33,7 @@ const ExpandButton = () => {
   return (
     <ActionIcon
       hidden={maximized}
-      className="item"
-      hiddenFrom="xxl"
+      className="titlebar-control"
       size="sm"
       color="gray"
       variant="transparent"
@@ -29,9 +43,9 @@ const ExpandButton = () => {
       }}
     >
       {navbarOpen ? (
-        <IconLayoutSidebarLeftCollapse />
+        <IconLayoutSidebarLeftCollapseFilled />
       ) : (
-        <IconLayoutSidebarLeftExpand />
+        <IconLayoutSidebarLeftExpandFilled />
       )}
     </ActionIcon>
   );
@@ -39,16 +53,23 @@ const ExpandButton = () => {
 
 export const App = () => {
   const navbarOpen = useAppSelector((state) => state.appShell.navbarOpen);
+  const dispatch = useAppDispatch();
   const { maximized } = useWindowState();
   const { platform } = useElectron();
+  const verticalSplitSizes = useAppSelector(
+    (state) => state.appShell.verticalSplitSizes
+  );
+  const horizontalSplitSizes = useAppSelector(
+    (state) => state.appShell.horizontalSplitSizes
+  );
   return (
     <AppShell
       header={{
         height: 40,
       }}
       navbar={{
-        width: 300,
-        breakpoint: "xxl",
+        width: navbarOpen ? 300 : 0,
+        breakpoint: "xs",
         collapsed: {
           mobile: !navbarOpen,
         },
@@ -65,26 +86,75 @@ export const App = () => {
           gap="sm"
           className="titlebar"
         >
-          {maximized ? <span style={{ width: 22 }} /> : <ExpandButton />}
+          <ExpandButton />
           <Flex justify="center" flex={1}>
-            <Text fw={900} fz="sm">
-              App
-            </Text>
+            <TextInput
+              leftSection={<IconSearch size={12} />}
+              className="titlebar-control"
+              placeholder="Search"
+              w="100%"
+              maw={500}
+              size="xs"
+            />
           </Flex>
-          <span style={{ width: 22 }} />
+          <span style={{ width: platform === "darwin" ? 106 : 22 }} />
         </Flex>
       </AppShell.Header>
-      <AppShell.Navbar>
+      <AppShell.Navbar style={{ overflow: "hidden" }}>
         <Center w="100%" h="100%">
           <Text fz="lg">Sidebar</Text>
         </Center>
       </AppShell.Navbar>
       <AppShell.Main w="100%" h="100%">
-        <Center w="100%" h="100%">
-          Main
-          <br />
-          {maximized ? " maximized" : "unmaximized"}
-        </Center>
+        <SplitPane
+          split="horizontal"
+          sizes={horizontalSplitSizes}
+          style={{ width: "100%", height: "100%", overflow: "hiddeen" }}
+          sashRender={() => (
+            <Divider
+              size="sm"
+              onDoubleClick={() =>
+                dispatch(setHorizontalSplitSizes(["50%", "50%"]))
+              }
+            />
+          )}
+          onChange={(sizes) => {
+            dispatch(setHorizontalSplitSizes(sizes));
+          }}
+        >
+          <Pane minSize="10%">
+            <Box p="xs">Main</Box>
+          </Pane>
+          <Pane minSize="10%">
+            <SplitPane
+              split="vertical"
+              sizes={verticalSplitSizes}
+              style={{ width: "100%", height: "100%" }}
+              sashRender={() => (
+                <Divider
+                  size="sm"
+                  style={{ height: "100%" }}
+                  orientation="vertical"
+                  onDoubleClick={() =>
+                    dispatch(setVerticalSplitSizes(["50%", "50%"]))
+                  }
+                />
+              )}
+              onChange={(sizes) => {
+                dispatch(setVerticalSplitSizes(sizes));
+              }}
+            >
+              <Pane minSize="10%">
+                <Box p="xs">
+                  WindowState: {maximized ? " maximized" : "unmaximized"}
+                </Box>
+              </Pane>
+              <Pane minSize="10%">
+                <Box p="xs">Platform: {platform}</Box>
+              </Pane>
+            </SplitPane>
+          </Pane>
+        </SplitPane>
       </AppShell.Main>
     </AppShell>
   );

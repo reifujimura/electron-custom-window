@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import "./styles.css";
 import "@mantine/core/styles.css";
+import "split-pane-react/esm/themes/default.css";
 
 const theme = createTheme({
   breakpoints: {

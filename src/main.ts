@@ -23,7 +23,9 @@ app.whenReady().then(() => {
     rendererLogger.log(data.level, data.message);
   });
   mainWindow = new BrowserWindow({
+    minWidth: 640,
     width: 1152,
+    minHeight: 40,
     height: 864,
     titleBarStyle: "hidden",
     titleBarOverlay:
@@ -47,14 +49,17 @@ app.whenReady().then(() => {
           : path.join(__dirname, "preload.js"),
     },
   });
-  mainWindow.on("maximize", () => {
-    logger.info("maximize");
+  const maximizeEvent =
+    process.platform === "darwin" ? "enter-full-screen" : "maximize";
+  mainWindow.on(maximizeEvent as any, () => {
     mainWindow?.webContents.send("maximize");
   });
-  mainWindow.on("unmaximize", () => {
-    logger.info("unmaximize");
+  const unmaximizeEvent =
+    process.platform === "darwin" ? "leave-full-screen" : "unmaximize";
+  mainWindow.on(unmaximizeEvent as any, () => {
     mainWindow?.webContents.send("unmaximize");
   });
+
   mainWindow.webContents.ipc.handle("maximized", () => {
     logger.info("ipc.handle(maximized)");
     const maximized = mainWindow?.isMaximized();
