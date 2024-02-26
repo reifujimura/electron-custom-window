@@ -1,9 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+const fetchInitializeData = () =>
+  new Promise((resolve) => setTimeout(resolve, 10000));
+
+export const initialize = createAsyncThunk("appShell/initialize", async () => {
+  await fetchInitializeData();
+  return true;
+});
 
 const initialState = {
+  status: 1 as 1 | 2 | 3,
   navbarOpen: false,
-  verticalSplitSizes: ["50%", "50%"],
-  horizontalSplitSizes: ["50%", "50%"],
+  verticalSplitSizes: ["50%", "50%"] as (string | number)[],
+  horizontalSplitSizes: ["50%", "50%"] as (string | number)[],
 };
 
 const appShellSlice = createSlice({
@@ -14,12 +23,27 @@ const appShellSlice = createSlice({
       state.navbarOpen = !state.navbarOpen;
       window.app.info(`Navbar is now ${state.navbarOpen ? "open" : "closed"}`);
     },
-    setVerticalSplitSizes: (state, action) => {
+    setVerticalSplitSizes: (
+      state,
+      action: PayloadAction<(string | number)[]>
+    ) => {
       state.verticalSplitSizes = action.payload;
     },
-    setHorizontalSplitSizes: (state, action) => {
+    setHorizontalSplitSizes: (
+      state,
+      action: PayloadAction<(string | number)[]>
+    ) => {
       state.horizontalSplitSizes = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(initialize.pending, (state) => {
+        state.status = 2;
+      })
+      .addCase(initialize.fulfilled, (state) => {
+        state.status = 3;
+      });
   },
 });
 

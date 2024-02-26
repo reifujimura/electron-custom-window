@@ -2,6 +2,7 @@ import {
   ActionIcon,
   AppShell,
   Box,
+  Button,
   Center,
   Divider,
   Flex,
@@ -21,6 +22,7 @@ import {
   useWindowState,
 } from "../hooks";
 import {
+  initialize,
   setHorizontalSplitSizes,
   setVerticalSplitSizes,
   toggleNavbar,
@@ -62,7 +64,14 @@ export const App = () => {
   const horizontalSplitSizes = useAppSelector(
     (state) => state.appShell.horizontalSplitSizes
   );
-  return (
+  const status = useAppSelector((state) => state.appShell.status);
+  return status !== 3 ? (
+    <Center w="100%" h="100%">
+      <Button loading={status === 2} onClick={() => dispatch(initialize())}>
+        INIT
+      </Button>
+    </Center>
+  ) : (
     <AppShell
       header={{
         height: 40,
