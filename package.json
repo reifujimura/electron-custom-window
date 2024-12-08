@@ -1,8 +1,37 @@
 {
   "private": true,
   "main": "dist/main.js",
+  "name": "electron-custom-window",
+  "version": "1.0.0",
+  "build": {
+    "asar": false,
+    "files": [
+      {
+        "from": "dist",
+        "to": "dist",
+        "filter": [
+          "main.js",
+          "preload.js",
+          "style.css",
+          "index.html",
+          "app.js",
+          "app.js.LICENSE.txt"
+        ]
+      },
+      {
+        "from": "static",
+        "to": "dist/static",
+        "filter": [
+          "**/*"
+        ]
+      },
+      "test",
+      "node_modules/**/*",
+      "package.json"
+    ]
+  },
   "scripts": {
-    "build": "cross-env NODE_ENV=\"production\" webpack --progress",
+    "build": "rimraf dist &&  cross-env NODE_ENV=\"production\" webpack --progress",
     "build:win": "electron-builder --win --x64",
     "dev": "rimraf dist && run-p dev:webpack dev:electron",
     "dev:webpack": "cross-env NODE_ENV=\"development\" webpack --progress",

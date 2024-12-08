@@ -43,10 +43,7 @@ app.whenReady().then(() => {
       y: 12,
     },
     webPreferences: {
-      preload:
-        process.env.NODE_ENV === "production"
-          ? path.join(__dirname, "static", "preload.js")
-          : path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "preload.js"),
     },
   });
   const maximizeEvent =
@@ -72,16 +69,15 @@ app.whenReady().then(() => {
 
   mainWindow.setMenu(null);
   mainWindow.setMenuBarVisibility(false);
-  mainWindow.loadFile(
-    process.env.NODE_ENV === "production"
-      ? "dist/static/index.html"
-      : "dist/index.html"
-  );
-  if (process.env.NODE_ENV === "development") {
-    mainWindow.webContents.openDevTools({
-      mode: "detach",
-    });
-  }
+  mainWindow.loadFile("dist/index.html");
+  //   if (process.env.NODE_ENV === "development") {
+  //     mainWindow.webContents.openDevTools({
+  //       mode: "detach",
+  //     });
+  //   }
+  mainWindow.webContents.openDevTools({
+    mode: "detach",
+  });
 });
 
 app.on("window-all-closed", () => {

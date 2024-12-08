@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const fetchInitializeData = () =>
-  new Promise((resolve) => setTimeout(resolve, 10000));
+  new Promise((resolve) => setTimeout(resolve, 5));
 
 export const initialize = createAsyncThunk("appShell/initialize", async () => {
   await fetchInitializeData();
